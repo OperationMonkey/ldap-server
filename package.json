@@ -11,7 +11,7 @@
     "prepare": "husky"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@operationmonkey/commitlint-config-core": "2.0.0",
     "@operationmonkey/eslint-config-core": "2.0.0",
