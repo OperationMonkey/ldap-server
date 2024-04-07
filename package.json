@@ -15,6 +15,7 @@
   "devDependencies": {
     "@operationmonkey/commitlint-config-core": "2.0.0",
     "@operationmonkey/eslint-config-core": "2.0.0",
+    "@operationmonkey/lint-staged-config-core": "2.0.0",
     "@operationmonkey/prettier-config-core": "2.0.0",
     "@operationmonkey/tsconfig-core": "2.1.1",
     "@types/ldapjs": "3.0.6",

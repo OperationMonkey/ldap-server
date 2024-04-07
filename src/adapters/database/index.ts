@@ -21,4 +21,5 @@ function createDatabaseAdapter(): Database {
   throw new Error("Unknown database type");
 }
 
+// eslint-disable-next-line import/no-unused-modules
 export const database = createDatabaseAdapter();
