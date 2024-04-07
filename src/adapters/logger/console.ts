@@ -1,7 +1,7 @@
 import type { Logger } from "../../ports/logger.port";
 
 export function createConsoleLogger(): Logger {
-  return {
+  return Object.freeze({
     error(message: string): void {
       console.error(message);
     },
@@ -11,5 +11,5 @@ export function createConsoleLogger(): Logger {
     debug(message: string): void {
       console.debug(message);
     },
-  };
+  });
 }

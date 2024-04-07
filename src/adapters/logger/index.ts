@@ -3,7 +3,7 @@ import { env } from "../env";
 
 import { createConsoleLogger } from "./console";
 
-function createLogger(): Logger {
+export const logger = (function createLogger(): Logger {
   switch (env.logger) {
     case "console":
       return createConsoleLogger();
@@ -12,6 +12,4 @@ function createLogger(): Logger {
   }
 
   throw new Error("Unknown logger type");
-}
-
-export const logger = createLogger();
+})();
