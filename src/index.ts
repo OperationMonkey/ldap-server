@@ -1,9 +1,10 @@
 import ldap from "ldapjs";
 
 import { env } from "./adapters/env";
+import { logger } from "./adapters/logger";
 
 const server = ldap.createServer();
 
 server.listen(env.ldapPort, () => {
-  console.log("LDAP server up at: %s", server.url);
+  logger.debug(`LDAP server up at: ${server.url}`);
 });
