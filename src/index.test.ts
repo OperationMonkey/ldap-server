@@ -1,7 +1,7 @@
-import { name as entitiesCommon } from "./entities/common.test";
+import { name as entityFactory } from "./entities/entity-factory.test";
 import { name as snakeToCamel } from "./utils/snake-to-camel.test";
 
-const tests = [snakeToCamel, entitiesCommon];
+const tests = [entityFactory, snakeToCamel];
 
 process.stdout.write("Loading tests: ");
 tests.forEach((test, index) => {

@@ -7,23 +7,27 @@ export interface Entity {
   load: (id: string) => Promise<void>;
 }
 
+type CreatePerson = () => Person & Entity;
+
 export interface EntityFactory {
-  createPerson: () => Person & Entity;
+  createPerson: CreatePerson;
 }
 
-/**
- *
- * @param values map of values for object properties
- * @param name name of the property we are creating
- * @returns PropertyDescriptor for the object
- */
-function createProperty(values: Map<string, string | number>, name: string): PropertyDescriptor {
+function createProperty(
+  values: Map<string, string | number>,
+  name: string,
+  type: "string" | "number"
+): PropertyDescriptor {
   return {
     get(): string | number | undefined {
       return values.get(name);
     },
     set(value: string | number): void {
-      values.set(name, value);
+      if (typeof value === type) {
+        values.set(name, value);
+      } else {
+        throw new Error("Type mismatch");
+      }
     },
     enumerable: true,
     configurable: false,
@@ -49,9 +53,10 @@ export function createEntityFactory(_database: Database): EntityFactory {
       };
 
       Object.defineProperties(o, {
-        username: createProperty(values, "username"),
-        password: createProperty(values, "password"),
-        realname: createProperty(values, "realname"),
+        username: createProperty(values, "username", "string"),
+        password: createProperty(values, "password", "string"),
+        realname: createProperty(values, "realname", "string"),
+        age: createProperty(values, "age", "number"),
       });
 
       return o as Person & Entity;

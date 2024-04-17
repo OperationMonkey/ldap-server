@@ -1,2 +1,2 @@
 export * from "./person";
-export * from "./common";
+export * from "./entity-factory";
