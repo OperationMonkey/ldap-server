@@ -1,6 +1,7 @@
+import { name as entitiesCommon } from "./entities/common.test";
 import { name as snakeToCamel } from "./utils/snake-to-camel.test";
 
-const tests = [snakeToCamel];
+const tests = [snakeToCamel, entitiesCommon];
 
 process.stdout.write("Loading tests: ");
 tests.forEach((test, index) => {
