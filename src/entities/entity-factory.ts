@@ -1,25 +1,25 @@
 import type { Database } from "../ports/database.port";
 
-import type { Person } from "./person";
+import type { PosixAccount } from "./posix-account";
 
 export interface Entity {
   save: () => Promise<void>;
   load: (id: string) => Promise<void>;
 }
 
-type CreatePerson = () => Person & Entity;
+type CreatePosixAccount = () => PosixAccount & Entity;
 
 export interface EntityFactory {
-  createPerson: CreatePerson;
+  createPosixAccount: CreatePosixAccount;
 }
 
-function createProperty(
-  values: Map<string, string | number>,
+function createEditableProperty(
+  values: Map<string, string | number | Array<string>>,
   name: string,
   type: "string" | "number"
 ): PropertyDescriptor {
   return {
-    get(): string | number | undefined {
+    get(): string | number | Array<string> | undefined {
       return values.get(name);
     },
     set(value: string | number): void {
@@ -34,10 +34,32 @@ function createProperty(
   };
 }
 
+function createProperty(
+  values: Map<string, string | number | Array<string>>,
+  name: string,
+  value?: string | number | Array<string>,
+  enumerable: boolean = true
+): PropertyDescriptor {
+  if (value) {
+    values.set(name, value);
+  }
+
+  return {
+    get(): string | number | Array<string> | undefined {
+      return values.get(name);
+    },
+    set(): void {
+      throw new Error("Attribute cannot be changed");
+    },
+    enumerable,
+    configurable: false,
+  };
+}
+
 export function createEntityFactory(_database: Database): EntityFactory {
   return {
-    createPerson(): Person & Entity {
-      const values = new Map<string, string | number>();
+    createPosixAccount(): PosixAccount & Entity {
+      const values = new Map<string, string | number | Array<string>>();
 
       const o = {
         async save(): Promise<void> {
@@ -53,13 +75,31 @@ export function createEntityFactory(_database: Database): EntityFactory {
       };
 
       Object.defineProperties(o, {
-        username: createProperty(values, "username", "string"),
-        password: createProperty(values, "password", "string"),
-        realname: createProperty(values, "realname", "string"),
-        age: createProperty(values, "age", "number"),
+        id: createProperty(values, "id", undefined, false),
+        objectClass: createProperty(values, "objectClass", ["top", "person", "posixAccount"]),
+        uid: createEditableProperty(values, "uid", "string"),
+        uidNumber: createEditableProperty(values, "uidNumber", "number"),
+        gidNumber: createEditableProperty(values, "gidNumber", "number"),
+        loginShell: createEditableProperty(values, "loginShell", "string"),
+        cn: createEditableProperty(values, "cn", "string"),
+        gecos: createProperty(values, "cn"),
+        mail: createEditableProperty(values, "mail", "string"),
+        dn: {
+          get(): string {
+            /**
+             * @todo handle organization
+             */
+            return `uid=${values.get("uid") as string},ou=users,o=[organization]`;
+          },
+          set() {
+            throw new Error("dn cannot be set");
+          },
+          enumerable: true,
+          configurable: false,
+        },
       });
 
-      return o as Person & Entity;
+      return o as PosixAccount & Entity;
     },
   };
 }

@@ -8,24 +8,50 @@ import { createEntityFactory } from "./entity-factory";
 export const name = "Entity factory";
 
 void describe("Entity factory", undefined, () => {
-  void it("should create person", () => {
-    const factory = createEntityFactory({} as Database);
-    const person = factory.createPerson();
+  const factory = createEntityFactory({} as Database);
 
-    person.username = "Foo";
-    person.password = "Bar";
-    person.realname = "Foo Bar";
+  void describe("Factory buildline", undefined, () => {
+    void it("should throw on type mismatch", () => {
+      const account = factory.createPosixAccount();
 
-    assert.equal(person.username, "Foo");
-    assert.equal(person.password, "Bar");
-    assert.equal(person.realname, "Foo Bar");
+      assert.throws(() => (account.cn = 123 as unknown as string));
+      assert.throws(() => (account.uidNumber = "1" as unknown as number));
+    });
   });
 
-  void it("should throw on type mismatch", () => {
-    const factory = createEntityFactory({} as Database);
-    const person = factory.createPerson();
+  void describe("Posic Accounts", undefined, () => {
+    void it("should create posix account", () => {
+      const account = factory.createPosixAccount();
 
-    assert.throws(() => (person.realname = 123 as unknown as string));
-    assert.throws(() => (person.age = "1" as unknown as number));
+      account.cn = "John Doe";
+
+      assert.equal(account.cn, "John Doe");
+    });
+
+    void it("should have correct object classes", () => {
+      const account = factory.createPosixAccount();
+
+      assert.deepEqual(account.objectClass, ["top", "person", "posixAccount"]);
+    });
+
+    void it("should update gecos with cn", () => {
+      const account = factory.createPosixAccount();
+
+      assert.equal(account.cn, account.gecos);
+      assert.equal(account.cn, undefined);
+
+      account.cn = "Jane Doe";
+      assert.equal(account.cn, account.gecos);
+      assert.equal(account.cn, "Jane Doe");
+    });
+
+    void it("should update dn with uid", () => {
+      const account = factory.createPosixAccount();
+
+      account.uid = "john";
+      assert.equal(account.dn, "uid=john,ou=users,o=[organization]");
+      account.uid = "jane";
+      assert.equal(account.dn, "uid=jane,ou=users,o=[organization]");
+    });
   });
 });
