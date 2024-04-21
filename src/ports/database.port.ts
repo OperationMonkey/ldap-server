@@ -1,6 +1,7 @@
-import type { Person } from "../entities";
+import type { PosixAccount, PosixGroup } from "../entities";
 
 export interface Database {
-  authenticateUser: (cn: string, password: string) => Promise<boolean>;
-  findUser: (cn: string) => Promise<Person>;
+  authenticateUser: (uid: string, password: string) => Promise<boolean>;
+  findUser: (uid: string) => Promise<PosixAccount>;
+  findGroup: (cn: string) => Promise<PosixGroup>;
 }
