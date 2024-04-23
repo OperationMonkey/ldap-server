@@ -39,4 +39,16 @@ void describe("Posic Accounts", undefined, () => {
     account.uid = "jane";
     assert.equal(account.dn, "uid=jane,ou=users,o=[organization]");
   });
+
+  void it("should miss all editable properties", () => {
+    const account = createPosixAccount();
+
+    assert.deepStrictEqual(account.missingAttributes, [
+      "uid",
+      "uidNumber",
+      "gidNumber",
+      "loginShell",
+      "cn",
+    ]);
+  });
 });

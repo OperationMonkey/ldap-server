@@ -73,4 +73,28 @@ void describe("Entity factory helpers", undefined, () => {
     assert.equal(obj.prop, "value");
     assert.equal(JSON.stringify({}), JSON.stringify(obj));
   });
+
+  void it("should add editable properties as missing", () => {
+    const values = new Map<string, string>();
+    const obj = {} as { prop: string };
+
+    Object.defineProperties(obj, {
+      prop: createEditableProperty(values, "prop", "string"),
+    });
+
+    assert.deepStrictEqual(values.get("missingAttributes"), ["prop"]);
+  });
+
+  void it("should have missingAttributes undefined, if all setters called", () => {
+    const values = new Map<string, string>();
+    const obj = {} as { prop: string };
+
+    Object.defineProperties(obj, {
+      prop: createEditableProperty(values, "prop", "string"),
+    });
+
+    obj.prop = "value";
+
+    assert.strictEqual(values.get("missingAttributes"), undefined);
+  });
 });
